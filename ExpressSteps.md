@@ -51,3 +51,9 @@
 1. If you wish to send json so that the broser can fetch it, `npm i cors`
    - `const cors = require("cors")`
    - `app.use(cors())`
+1. If you wish to send a 404 page for unknown routes
+   ```js
+      app.use((req, res) => {
+      res.status(404).send("404 Not Found");
+      });
+   ```
