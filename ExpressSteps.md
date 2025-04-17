@@ -33,8 +33,18 @@
      app.use(bodyParser.json()); // Middleware to parse JSON data
      app.use(bodyParser.urlencoded({ extended: true }));
     ```
-1. Can now define routes like:
+1. Define routes like:
    ```js
     app.get("/orders/:id", (req, res) => {
       console.log("req.params: ", req.params);
+   ```
+1. or if you wish to get query params such as `/orders/search?customer=alice`
+   ```js
+    app.get("/orders/search", (req, res) => {
+      const { customer, item } = req.query;
+   ```
+1. or if you wish to get POST data:
+   ```js
+    app.post("/orders", (req, res) => {
+      const { item, quantity, customer } = req.body;
    ```
