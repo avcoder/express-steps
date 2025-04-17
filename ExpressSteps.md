@@ -57,3 +57,9 @@
       res.status(404).send("404 Not Found");
       });
    ```
+1. If you wish to have terminal logs, `npm i morgan`
+   ```js
+      const morgan = require('morgan');
+      const app = express();
+      app.use(morgan('dev'));  
+   ``` 
