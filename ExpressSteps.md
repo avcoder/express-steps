@@ -48,3 +48,6 @@
     app.post("/orders", (req, res) => {
       const { item, quantity, customer } = req.body;
    ```
+1. If you wish to send json so that the broser can fetch it, `npm i cors`
+   - `const cors = require("cors")`
+   - `app.use(cors())`
