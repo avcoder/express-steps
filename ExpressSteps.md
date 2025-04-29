@@ -99,9 +99,9 @@
    ```
 1. Create `/src/models/order.js`
    ```js
-  import mongoose from "mongoose";
+   import mongoose from "mongoose";
 
-  const orderSchema = mongoose.Schema({
+   const orderSchema = mongoose.Schema({
     name: {
       type: String,
       required: [true, "name is required"],
@@ -117,7 +117,7 @@
       default: false,
     },
     receiptId: String,
-  });
+   });
 
   export default mongoose.model("order", orderSchema);
   ```
