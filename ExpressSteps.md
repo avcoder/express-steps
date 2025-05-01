@@ -35,9 +35,13 @@
    import { connect } from "./connect.js";
    import { app } from "./server.js";
    
-   app.listen(process.env.PORT, () => {
-      console.log(`Server running on http://localhost:${process.env.PORT}`);
-   });
+   connect(process.env.DB_CONN)
+   .then(() => {
+      app.listen(process.env.PORT, () => {
+         console.log(`Server running on http://localhost:${process.env.PORT}`);
+      });
+   })
+   .catch((e) => console.error(e));
    ```
 1. Since we are using the `import` way (aka ES Module way), we have to edit package.json to have `"type": "module",`
 1. Edit package.json so you can use nodemon.  Inside "scripts" block enter new line:
