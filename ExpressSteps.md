@@ -35,6 +35,7 @@
    import { connect } from "./connect.js";
    import { app } from "./server.js";
    
+
    connect(process.env.DB_CONN)
    .then(() => {
       app.listen(process.env.PORT, () => {
@@ -50,12 +51,35 @@
     ```
 1. In terminal: `npm run start`
 
+# Incorporate Mongoose in Express
+1. create a new /src/connect.js file:
+   ```js
+   const mongoose = require('mongoose');
+
+   export const connect = (url) => mongoose.connect(url);
+   ```
+1. Copy your mongoDB connection string and put it into .env (ex: DB_CONN=insert-mongodb-connection-string-here)
+1. Use compass to insert at least 1 document in your order collection within foodtruck database
+1. Modify index.js:
+   - `import { connect } from "./connect.js";`
+   - modify app.listen to be below:
+   ```js
+   connect(process.env.DB_CONN)
+      .then(() => {
+         app.listen(process.env.PORT, () => {
+            console.log(`Server running on http://localhost:${process.env.PORT}`);
+         });
+      })
+      .catch((e) => console.error(e));
+   ```
+
 # Routes
-1. in /src folder, create router.js:
+Next we want to define and organize our routes.  
+1. in /src folder, create router.js :
    ```js
    import { Router } from "express";
-   import orderController from "./controllers/orderController.js"; // will direct traffic
-   
+   import orderController from "./controllers/orderController.js"; // to be created
+
    export const router = Router(); 
    
    // Order
@@ -63,14 +87,74 @@
    
    // TODO: Fill in rest of CRUD routes
    ```
-   - in server.js, import your above router file `import { router } from "./router.js"`
-   - then after your `app.get('/') statement, place the following middleware:
+   - in server.js, import your above router file `import { router } from "./router.js";` 
+   - then after your get / route statement, place the following middleware: `app.use('/api', router)`
+   
+1. Let's now create that file.  Create new /src/controllers/orderController.js 
    ```js
-   app.use('/api', router)
+   import orderHandlers from "../handlers/order.js"; // to be created
+
+   const getOrders = async (req, res) => {
+      const orders = await orderHandlers.getAllOrders();
+   res.status(200).json(orders);
+   };
+
+   export default { getOrders };
    ```
-1. Next let's developer our orderController.getOrders function. Create `/src/controllers/orderController.js`
+1. Now create src/handlers/order.js:
+   ```js
+   import Order from "../models/order.js"; // to be created
+
+   const getAllOrders = async () => {
+      return await Order.find(); 
+   };
+   ```
+## Schemas and Models
+1. Let's first create a schema for our order.  In /src/models/order.js
+   ```js
+   import mongoose from "mongoose";
+
+   const orderSchema = mongoose.Schema({
+      name: {
+         type: String,
+         required: [true, "name is required"],
+      },
+      order: [String],
+      isReady: {
+         type: Boolean,
+         default: false
+      },
+      receiptId: String
+   });
+
+   export default mongoose.model("order", orderSchema);
+   ```
+1. With schema in place, Let's now create our order model.  In /src/handlers/order.js, start modifying `getOrders()`
+   ```js
+   import Order from "../models/order.js";
+
+   const getOrders = async (req, res) => {
+      return await Order.find().lean(); // what does .lean() do?
+   };
+   ```
+1. Next let's develop our orderController.getOrders function. Create `/src/controllers/orderController.js`
    ```js
     import orderHandler from "../handlers/order.js";
+1. Test: do a GET request to `/api/order` endpoint - do you get JSON back?
+
+## Exercise
+1. Define rest of our order routes in router.js, including getOrderByReceiptId, updateOrder, deleteOrder, createOrder, searchOrder
+1. 
+   ```js
+   // ex: GET /api/orders/2 
+   // in router.js
+   router.get("/order/:receipt_id", getOrderByReceiptId);
+   // in controller
+   // in /handlers/order.js
+   export const getOrderById = async (req, res) => {
+      const id = req.params.id;
+      res.json({ id });
+   }
 
     const getOrders = async (req, res) => {
       const orders = await orderHandler.getAllOrders();  // will call our models
@@ -126,3 +210,4 @@
   export default mongoose.model("order", orderSchema);
   ```
 1. Test our app so far: do a GET request to /api/order endpoint - do you get JSON back?
+1. Update `router.js` with new routes.  Then test routes to see if they respond appropriately
