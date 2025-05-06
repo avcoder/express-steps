@@ -2,7 +2,7 @@
 
 1. Create a new folder and go into it via `cd folder-name`
 1. `npm init -y`
-1. `npm i express mongoose morgan dotenv cors`
+1. `npm i express mongoose morgan dotenv cors express-validator ejs`
 1. `npm i --save-dev nodemon`
 1. create src/server.js file with the following code:
    ```js
